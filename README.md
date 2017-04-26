@@ -7,7 +7,7 @@ A lightweight VPC module for terraform.
 ```hcl
 
 module "vpc" {
-  source = "github.com/rnesbit/tf_simple_vpc"
+  source = "github.com/rnesbit/tf_simple_vpc?ref=v0.1"
 
   environment = "vpc_name"
 
