@@ -24,10 +24,6 @@ variable "enable_dns_support" {
    description = "Should be true if you want to use private DNS within the VPC"
 }
 
-variable "map_public_ip_on_launch" {
-  default = true
-}
-
 variable "az" {
   default = "us-west-1a"
   description = "availability zones"
@@ -43,10 +39,11 @@ variable "private_subnet" {
    description = "the private subnet"
 }
 
-#variable "tags" {
-#  default = ""
-#  description = "tags"
-#}
+variable "map_public_ip_on_launch" {
+  default = true
+}
+
+#bastion host
 
 variable "bastion_ami" {
   type = "map"
@@ -59,21 +56,3 @@ variable "bastion_instance_type" {
 variable "key_name" {
   type = "string"
 }
-
-# output
-
-#output "vpc_id" {
-#  value = "${aws_vpc.environment.id}"
-#}
-
-#output "public_security_group_id" {
-#  value = "${aws_security_group.public.id}"
-#}
-
-#output "nat_gateway_id" {
-#  value = "${aws_nat_gateway.environment.id}"
-#}
-
-#output "private_subnet_id" {
-#  value = "${aws_subnet_private_id}"
-#}
