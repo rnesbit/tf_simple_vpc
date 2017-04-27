@@ -43,6 +43,12 @@ variable "map_public_ip_on_launch" {
   default = true
 }
 
+# host
+
+variable "key_name" {
+  type = "string"
+}
+
 #bastion host
 
 variable "bastion_ami" {
@@ -53,6 +59,12 @@ variable "bastion_instance_type" {
   type = "string"
 }
 
-variable "key_name" {
+#admin host
+
+variable "admin_ami" {
+  type = "map"
+}
+
+variable "admin_instance_type" {
   type = "string"
 }
