@@ -100,15 +100,22 @@ resource "aws_route_table_association" "private" {
 
 # security groups
 
-resource "aws_security_group" "public" {
+resource "aws_security_group" "bastion" {
   vpc_id      = "${aws_vpc.vpc.id}"
-  name        = "${var.environment}-public"
+  name        = "${var.environment}-bastion"
   description = "Allow SSH to public"
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8
+    to_port     = 0
+    protocol    = "icmp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -119,10 +126,27 @@ resource "aws_security_group" "public" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  tags {
+    Name = "${var.environment}-bastion-sg"
+  }
+}
+
+resource "aws_security_group" "public" {
+  vpc_id      = "${aws_vpc.vpc.id}"
+  name        = "${var.environment}-public"
+  description = "Allow web services to internet"
+
   ingress {
-    from_port   = 8
-    to_port     = 0
-    protocol    = "icmp"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -140,7 +164,7 @@ resource "aws_security_group" "private" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    security_groups = ["${aws_security_group.public.id}"]
+    security_groups = ["${aws_security_group.public.id}", "${aws_security_group.bastion.id}"]
   }
 
   egress {
