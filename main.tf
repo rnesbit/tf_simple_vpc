@@ -103,7 +103,7 @@ resource "aws_route_table_association" "private" {
 resource "aws_security_group" "bastion" {
   vpc_id      = "${aws_vpc.vpc.id}"
   name        = "${var.environment}-bastion"
-  description = "Allow SSH to public"
+  description = "Allow SSH to bastion"
 
   ingress {
     from_port   = 22
@@ -150,6 +150,13 @@ resource "aws_security_group" "public" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags {
     Name = "${var.environment}-public-sg"
   }
@@ -186,12 +193,26 @@ resource "aws_instance" "bastion" {
   ami                         = "${lookup(var.bastion_ami, var.region)}"
   instance_type               = "${var.bastion_instance_type}"
   key_name                    = "${var.key_name}"
-  vpc_security_group_ids      = ["${aws_security_group.public.id}"]
+  vpc_security_group_ids      = ["${aws_security_group.bastion.id}"]
   subnet_id                   = "${aws_subnet.public.id}"
   associate_public_ip_address = true
 
   tags {
     Terraform = "true"
     Name = "${var.environment}-bastion"
+  }
+}
+
+resource "aws_instance" "admin" {
+  ami                         = "${lookup(var.admin_ami, var.region)}"
+  instance_type               = "${var.admin_instance_type}"
+  key_name                    = "${var.key_name}"
+  vpc_security_group_ids      = ["${aws_security_group.private.id}"]
+  subnet_id                   = "${aws_subnet.private.id}"
+  associate_public_ip_address = false
+
+  tags {
+    Terraform = "true"
+    Name = "${var.environment}-admin"
   }
 }
