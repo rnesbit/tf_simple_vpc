@@ -30,6 +30,8 @@ resource "aws_nat_gateway" "ngw" {
 
   allocation_id = "${aws_eip.ngw_eip.id}"
   subnet_id     = "${aws_subnet.public.id}"
+
+  depends_on = ["aws_internet_gateway.igw"]
 }
 
 # routes
@@ -61,7 +63,7 @@ resource "aws_route_table" "private_rt" {
 resource "aws_route" "private_nat_gateway" {
   route_table_id         = "${aws_route_table.private_rt.id}"
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_nat_gateway.ngw.id}"
+  nat_gateway_id             = "${aws_nat_gateway.ngw.id}"
 }
 
 # subnets
