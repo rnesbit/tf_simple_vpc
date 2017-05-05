@@ -43,7 +43,7 @@ variable "map_public_ip_on_launch" {
   default = true
 }
 
-# host
+# hosts
 
 variable "key_name" {
   type = "string"
@@ -59,12 +59,32 @@ variable "bastion_instance_type" {
   type = "string"
 }
 
-#admin host
+# terraform host
 
-variable "admin_ami" {
+variable "terraform_ami" {
   type = "map"
 }
 
-variable "admin_instance_type" {
+variable "terraform_instance_type" {
+  type = "string"
+}
+
+# spinnaker host
+
+variable "spinnaker_ami" {
+  type = "map"
+}
+
+variable "spinnaker_instance_type" {
+  type = "string"
+}
+
+# jenkins host
+
+variable "jenkins_ami" {
+  type = "map"
+}
+
+variable "jenkins_instance_type" {
   type = "string"
 }

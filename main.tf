@@ -186,6 +186,7 @@ resource "aws_security_group" "private" {
   }
 }
 
+# hosts
 
 # bastion host
 
@@ -203,9 +204,11 @@ resource "aws_instance" "bastion" {
   }
 }
 
-resource "aws_instance" "admin" {
-  ami                         = "${lookup(var.admin_ami, var.region)}"
-  instance_type               = "${var.admin_instance_type}"
+# terraform host
+
+resource "aws_instance" "terraform" {
+  ami                         = "${lookup(var.terraform_ami, var.region)}"
+  instance_type               = "${var.terraform_instance_type}"
   key_name                    = "${var.key_name}"
   vpc_security_group_ids      = ["${aws_security_group.private.id}"]
   subnet_id                   = "${aws_subnet.private.id}"
@@ -213,6 +216,38 @@ resource "aws_instance" "admin" {
 
   tags {
     Terraform = "true"
-    Name = "${var.environment}-admin"
+    Name = "${var.environment}-terraform"
+  }
+}
+
+# spinnaker host
+
+resource "aws_instance" "spinnaker" {
+  ami                         = "${lookup(var.spinnaker_ami, var.region)}"
+  instance_type               = "${var.spinnaker_instance_type}"
+  key_name                    = "${var.key_name}"
+  vpc_security_group_ids      = ["${aws_security_group.private.id}"]
+  subnet_id                   = "${aws_subnet.private.id}"
+  associate_public_ip_address = false
+
+  tags {
+    Terraform = "true"
+    Name = "${var.environment}-spinnaker"
+  }
+}
+
+# jenkins host
+
+resource "aws_instance" "jenkins" {
+  ami                         = "${lookup(var.jenkins_ami, var.region)}"
+  instance_type               = "${var.jenkins_instance_type}"
+  key_name                    = "${var.key_name}"
+  vpc_security_group_ids      = ["${aws_security_group.private.id}"]
+  subnet_id                   = "${aws_subnet.private.id}"
+  associate_public_ip_address = false
+
+  tags {
+    Terraform = "true"
+    Name = "${var.environment}-jenkins"
   }
 }
